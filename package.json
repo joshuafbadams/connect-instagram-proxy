@@ -1,6 +1,6 @@
 {
   "name": "connect-instagram-proxy",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Connect middleware for proxying Instagram media",
   "main": "dist/connect-insta-proxy.js",
   "repository": {

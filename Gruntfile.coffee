@@ -6,7 +6,7 @@ module.exports = (grunt) ->
 		coffee:
 			main:
 				files:
-					'dist/connect-concierge.js': 'src/connect-concierge.coffee'
+					'dist/connect-instagram-proxy.js': 'src/connect-instagram-proxy.coffee'
 
 		coffeelint:
 			main:
