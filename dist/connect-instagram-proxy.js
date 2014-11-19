@@ -18,9 +18,7 @@ Module dependencies.
     return function(req, res, next) {
       return request.get("https://api.instagram.com/v1/users/" + userId + "/media/recent/?client_id=" + clientId, function(err, response, body) {
         res.setHeader("Content-Type", "application/json");
-        res.setHeader({
-          "Access-Control-Allow-Origin": "*"
-        });
+        res.setHeader("Access-Control-Allow-Origin", "*");
         res.write(body);
         return res.end();
       });
