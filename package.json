@@ -3,9 +3,6 @@
   "version": "0.0.1",
   "description": "Connect middleware for proxying Instagram media",
   "main": "dist/connect-insta-proxy.js",
-  "scripts": {
-    "test": "mocha --compilers coffee:coffee-script/register --reporter spec test/**"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/vmattos/connect-instagram-proxy"
@@ -25,3 +22,4 @@
     "grunt-coffeelint": "0.0.13"
   }
 }
+  
