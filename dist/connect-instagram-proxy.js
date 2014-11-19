@@ -12,7 +12,9 @@ Module dependencies.
     if (userId == null) {
       userId = '';
     }
-    throw new Error('"clientId" parameter is required');
+    if (clientId == null) {
+      throw new Error('"clientId" parameter is required');
+    }
     return function(req, res, next) {
       return request.get("https://api.instagram.com/v1/users/" + userId + "/media/recent/?client_id=" + clientId, function(err, response, body) {
         res.setHeader("Content-Type", "application/json");

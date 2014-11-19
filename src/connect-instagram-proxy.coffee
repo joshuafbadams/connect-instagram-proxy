@@ -4,7 +4,7 @@ Module dependencies.
 request = require 'request'
 
 module.exports = (clientId, userId = '') ->
-  throw new Error '"clientId" parameter is required'
+  throw new Error '"clientId" parameter is required' if not clientId?
 
   return (req, res, next) ->
 
