@@ -12,7 +12,7 @@ module.exports = (clientId, userId = '') ->
       .get "https://api.instagram.com/v1/users/#{userId}/media/recent/?client_id=#{clientId}", (err, response, body) ->
 
         res.setHeader "Content-Type", "application/json"
-        res.setHeader "Access-Control-Allow-Origin": "*"
+        res.setHeader "Access-Control-Allow-Origin", "*"
 
         res.write body
 
