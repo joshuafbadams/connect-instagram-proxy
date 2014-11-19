@@ -20,6 +20,8 @@
     "grunt-mocha-test": "~0.12.1",
     "coffeelint": "~1.6.1",
     "grunt-coffeelint": "0.0.13"
+  },
+  "dependencies": {
+    "request": "~2.48.0"
   }
 }
-  
