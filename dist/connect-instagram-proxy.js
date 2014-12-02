@@ -57,9 +57,6 @@ Module dependencies.
           return sendRequest(paginationUrl, callback);
         } else {
           setHeaders(res);
-          console.log(JSON.stringify({
-            data: data
-          }));
           res.write(JSON.stringify({
             data: data
           }));
