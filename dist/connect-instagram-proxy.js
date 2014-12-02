@@ -46,22 +46,20 @@ Module dependencies.
     return function(req, res, next) {
       var callback, data;
       data = [];
-      callback = function(err, response, body) {
-        var paginationUrl, resObj;
-        resObj = JSON.parse(body);
-        paginationUrl = resObj.pagination['next_url'];
-        data = data.concat(resObj.data);
-        console.log('paginationurl:', paginationUrl);
-        if (paginationUrl != null) {
-          return sendRequest(paginationUrl, callback);
-        } else {
-          setHeaders(res);
-          res.write(JSON.stringify({
-            data: data
-          }));
-          return res.end();
-        }
-      };
+      callback = (function(_this) {
+        return function(err, response, body) {
+          var pagination, paginationUrl, resObj;
+          resObj = JSON.parse(body);
+          pagination = resObj.pagination;
+          paginationUrl = pagination['next_url'];
+          data = data.concat(resObj.data);
+          if (paginationUrl != null) {
+            return sendRequest(paginationUrl, callback);
+          } else {
+            return next();
+          }
+        };
+      })(this);
       return sendRequest("https://api.instagram.com/v1/users/" + userId + "/media/recent/?client_id=" + clientId, callback);
     };
   };
