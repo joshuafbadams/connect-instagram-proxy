@@ -16,12 +16,13 @@ exports.firstPage = (clientId, userId = '') ->
 
   return (req, res, next) ->
 
+    req.instagram or= {}
 
     sendRequest "https://api.instagram.com/v1/users/#{userId}/media/recent/?client_id=#{clientId}", (err, response, body) ->
       setHeaders res
       resObj = JSON.parse body
-      res.write JSON.stringify data: resObj.data
-      res.end()
+      req.instagram.firstPage = resObj.data
+      next()
 
 exports.allPages = (clientId, userId = '') ->
   throw new Error '"clientId" parameter is required' if not clientId?

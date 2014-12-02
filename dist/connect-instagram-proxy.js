@@ -25,14 +25,13 @@ Module dependencies.
       throw new Error('"clientId" parameter is required');
     }
     return function(req, res, next) {
+      req.instagram || (req.instagram = {});
       return sendRequest("https://api.instagram.com/v1/users/" + userId + "/media/recent/?client_id=" + clientId, function(err, response, body) {
         var resObj;
         setHeaders(res);
         resObj = JSON.parse(body);
-        res.write(JSON.stringify({
-          data: resObj.data
-        }));
-        return res.end();
+        req.instagram.firstPage = resObj.data;
+        return next();
       });
     };
   };
