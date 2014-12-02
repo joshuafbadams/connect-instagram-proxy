@@ -25,14 +25,13 @@ Module dependencies.
       throw new Error('"clientId" parameter is required');
     }
     return function(req, res, next) {
+      req.instagram || (req.instagram = {});
       return sendRequest("https://api.instagram.com/v1/users/" + userId + "/media/recent/?client_id=" + clientId, function(err, response, body) {
         var resObj;
         setHeaders(res);
         resObj = JSON.parse(body);
-        res.write(JSON.stringify({
-          data: resObj.data
-        }));
-        return res.end();
+        req.instagram.firstPage = resObj.data;
+        return next();
       });
     };
   };
@@ -48,22 +47,15 @@ Module dependencies.
       var callback, data;
       data = [];
       callback = function(err, response, body) {
-        var paginationUrl, resObj;
+        var pagination, paginationUrl, resObj;
         resObj = JSON.parse(body);
-        paginationUrl = resObj.pagination['next_url'];
+        pagination = resObj.pagination;
+        paginationUrl = pagination['next_url'];
         data = data.concat(resObj.data);
-        console.log('paginationurl:', paginationUrl);
         if (paginationUrl != null) {
           return sendRequest(paginationUrl, callback);
         } else {
-          setHeaders(res);
-          console.log(JSON.stringify({
-            data: data
-          }));
-          res.write(JSON.stringify({
-            data: data
-          }));
-          return res.end();
+          return next();
         }
       };
       return sendRequest("https://api.instagram.com/v1/users/" + userId + "/media/recent/?client_id=" + clientId, callback);

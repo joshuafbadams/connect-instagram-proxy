@@ -1,8 +1,26 @@
 
 should = require 'should'
+nock = require 'nock'
 proxy = require '../dist/connect-instagram-proxy'
+firstPageMock = require './mocks/first-page-mock'
+secondPageMock = require './mocks/second-page-mock'
+
+nock('https://api.instagram.com')
+  .persist()
+  .get('/v1/users/1/media/recent/?client_id=1')
+  .reply(200, firstPageMock)
+  .get('/v1/users/1/media/recent?max_id=823303733579372832_1514859117&client_id=1')
+  .reply(200, secondPageMock)
 
 describe 'connect-instagram-proxy', ->
+
+  req = {}
+  res = {}
+
+  beforeEach ->
+    req = {}
+    res =
+      setHeader: ->
 
   describe '#firstPage()', ->
 
@@ -22,9 +40,20 @@ describe 'connect-instagram-proxy', ->
 
       clientId = 1
 
-      middleware = firstPage(clientId)
+      middleware = firstPage clientId
       middleware.should.be.a.Function
       done()
+
+    it 'should insert instagram json response in the request object', (done) ->
+
+      clientId = 1
+      userId = 1
+
+      middleware = firstPage clientId, userId
+      middleware req, res, ->
+
+        req.instagram.firstPage.should.be.an.Object
+        done()
 
   describe '#allPages()', ->
 
@@ -44,6 +73,15 @@ describe 'connect-instagram-proxy', ->
 
       clientId = 1
 
-      middleware = allPages(clientId)
+      middleware = allPages clientId
       middleware.should.be.a.Function
       done()
+
+    it 'should concatenate all pages in the instagram api', (done) ->
+
+      clientId = 1
+      userId = 1
+
+      middleware = allPages clientId, userId
+      middleware req, res, ->
+        done()
