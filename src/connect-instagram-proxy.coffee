@@ -30,7 +30,7 @@ exports.allPages = (clientId, userId = '') ->
   return (req, res, next) ->
     data = []
 
-    callback = (err, response, body) =>
+    callback = (err, response, body) ->
       resObj = JSON.parse body
       pagination = resObj.pagination
       paginationUrl = pagination['next_url']
