@@ -23,6 +23,7 @@
     "nock": "~0.51.0"
   },
   "dependencies": {
-    "request": "~2.48.0"
+    "request": "~2.48.0",
+    "node-cache": "~1.0.3"
   }
 }
