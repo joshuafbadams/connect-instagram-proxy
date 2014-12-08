@@ -4,13 +4,11 @@ Module dependencies.
  */
 
 (function() {
-  var batata, mediaCache, request, sendRequest, setHeaders;
+  var mediaCache, request, sendRequest, setHeaders;
 
   request = require('request');
 
   mediaCache = require('../config/cache-config');
-
-  batata = 1;
 
   sendRequest = function(url, callback) {
     return request.get(url, callback);

@@ -3,7 +3,6 @@ Module dependencies.
 ###
 request = require 'request'
 mediaCache = require '../config/cache-config'
-batata = 1
 
 sendRequest = (url, callback) ->
   request
