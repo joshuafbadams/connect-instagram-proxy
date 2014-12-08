@@ -2,6 +2,8 @@
 Module dependencies.
 ###
 request = require 'request'
+mediaCache = require '../config/cache-config'
+batata = 1
 
 sendRequest = (url, callback) ->
   request
@@ -18,11 +20,19 @@ exports.firstPage = (clientId, userId = '') ->
 
     req.instagram or= {}
 
-    sendRequest "https://api.instagram.com/v1/users/#{userId}/media/recent/?client_id=#{clientId}", (err, response, body) ->
-      setHeaders res
-      resObj = JSON.parse body
-      req.instagram.firstPage = resObj.data
-      next()
+    mediaCache.get 'firstPage', (err, value) ->
+      return next(err) if err
+
+      if value.firstPage
+        req.instagram.firstPage = value.firstPage.data
+        next()
+      else
+        sendRequest "https://api.instagram.com/v1/users/#{userId}/media/recent/?client_id=#{clientId}", (err, response, body) ->
+          setHeaders res
+          resObj = JSON.parse body
+          mediaCache.set 'firstPage', resObj
+          req.instagram.firstPage = resObj.data
+          next()
 
 exports.allPages = (clientId, userId = '') ->
   throw new Error '"clientId" parameter is required' if not clientId?

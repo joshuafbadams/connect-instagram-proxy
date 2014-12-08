@@ -1,9 +1,12 @@
 
 should = require 'should'
 nock = require 'nock'
-proxy = require '../dist/connect-instagram-proxy'
+rewire = require 'rewire'
+proxy = rewire '../src/connect-instagram-proxy'
 firstPageMock = require './mocks/first-page-mock'
 secondPageMock = require './mocks/second-page-mock'
+
+mediaCache = proxy.__get__ 'mediaCache'
 
 nock('https://api.instagram.com')
   .persist()
@@ -26,6 +29,9 @@ describe 'connect-instagram-proxy', ->
 
     firstPage = proxy.firstPage
 
+    afterEach ->
+      mediaCache.flushAll()
+
     it 'should exist as a public function', (done) ->
 
       firstPage.should.be.a.Function
@@ -44,14 +50,29 @@ describe 'connect-instagram-proxy', ->
       middleware.should.be.a.Function
       done()
 
-    it 'should insert instagram json response in the request object', (done) ->
+    it 'should respond from cache if instagram response is cached', (done) ->
+
+      mediaCache.set 'firstPage', firstPageMock
 
       clientId = 1
       userId = 1
 
       middleware = firstPage clientId, userId
       middleware req, res, ->
+        cacheStats = mediaCache.getStats()
+        cacheStats.hits.should.equal 1
+        req.instagram.firstPage.should.be.an.Object
+        done()
 
+    it 'should consult instagram API and cache response if not cached', (done) ->
+
+      clientId = 1
+      userId = 1
+
+      middleware = firstPage clientId, userId
+      middleware req, res, ->
+        cacheStats = mediaCache.getStats()
+        cacheStats.hits.should.equal 0
         req.instagram.firstPage.should.be.an.Object
         done()
 

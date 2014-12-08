@@ -4,9 +4,13 @@ Module dependencies.
  */
 
 (function() {
-  var request, sendRequest, setHeaders;
+  var batata, mediaCache, request, sendRequest, setHeaders;
 
   request = require('request');
+
+  mediaCache = require('../config/cache-config');
+
+  batata = 1;
 
   sendRequest = function(url, callback) {
     return request.get(url, callback);
@@ -26,12 +30,23 @@ Module dependencies.
     }
     return function(req, res, next) {
       req.instagram || (req.instagram = {});
-      return sendRequest("https://api.instagram.com/v1/users/" + userId + "/media/recent/?client_id=" + clientId, function(err, response, body) {
-        var resObj;
-        setHeaders(res);
-        resObj = JSON.parse(body);
-        req.instagram.firstPage = resObj.data;
-        return next();
+      return mediaCache.get('firstPage', function(err, value) {
+        if (err) {
+          return next(err);
+        }
+        if (value.firstPage) {
+          req.instagram.firstPage = value.firstPage.data;
+          return next();
+        } else {
+          return sendRequest("https://api.instagram.com/v1/users/" + userId + "/media/recent/?client_id=" + clientId, function(err, response, body) {
+            var resObj;
+            setHeaders(res);
+            resObj = JSON.parse(body);
+            mediaCache.set('firstPage', resObj);
+            req.instagram.firstPage = resObj.data;
+            return next();
+          });
+        }
       });
     };
   };
