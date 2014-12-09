@@ -2,7 +2,7 @@
   "name": "connect-instagram-proxy",
   "version": "0.3.3",
   "description": "Connect middleware for proxying Instagram media",
-  "main": "dist/connect-instagram-proxy.js",
+  "main": "main.js",
   "scripts": {
     "test": "mocha --compilers coffee:coffee-script/register --reporter nyan test/**"
   },

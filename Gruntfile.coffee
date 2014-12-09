@@ -3,10 +3,6 @@ module.exports = (grunt) ->
 	coffeelintConfig = grunt.file.readJSON('coffeelint-config.json')
 
 	grunt.initConfig
-		coffee:
-			main:
-				files:
-					'dist/connect-instagram-proxy.js': 'src/connect-instagram-proxy.coffee'
 
 		coffeelint:
 			main:
@@ -17,7 +13,7 @@ module.exports = (grunt) ->
 		watch:
 			main:
 				files: ['test/**', 'src/**', 'libs/**', 'utils/**']
-				tasks: ['coffeelint', 'coffee', 'mochaTest']
+				tasks: ['coffeelint', 'mochaTest']
 
 		mochaTest:
 			main:
@@ -30,7 +26,7 @@ module.exports = (grunt) ->
 	tasks =
 		build: ['test']
 		default: ['testWatch']
-		test: ['coffeelint', 'coffee', 'mochaTest']
+		test: ['coffeelint', 'mochaTest']
 		testWatch: ['test', 'watch']
 	
 	grunt.registerTask taskName, taskArray for taskName, taskArray of tasks
