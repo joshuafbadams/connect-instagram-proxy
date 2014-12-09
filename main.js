@@ -1,2 +1,2 @@
 require('coffee-script/register');
-require('./src/connect-instagram-proxy.coffee');
+module.exports =  require('./src/connect-instagram-proxy.coffee');
