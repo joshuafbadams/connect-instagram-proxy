@@ -38,17 +38,28 @@ exports.allPages = (clientId, userId = '') ->
 
   return (req, res, next) ->
     data = []
+    req.instagram or= {}
 
-    callback = (err, response, body) ->
-      resObj = JSON.parse body
-      pagination = resObj.pagination
-      paginationUrl = pagination['next_url']
+    mediaCache.get 'allPages', (err, value) ->
+      return next(err) if err
 
-      data = data.concat resObj.data
-
-      if paginationUrl?
-        sendRequest paginationUrl, callback
+      if value.allPages
+        req.instagram.allPages = value.allPages.data
+        next()
       else
-        return next()
+        callback = (err, response, body) ->
+          resObj = JSON.parse body
+          pagination = resObj.pagination
+          paginationUrl = pagination['next_url']
 
-    sendRequest "https://api.instagram.com/v1/users/#{userId}/media/recent/?client_id=#{clientId}", callback
+          data = data.concat resObj.data
+
+          if paginationUrl?
+            sendRequest paginationUrl, callback
+          else
+            dataObj = data: data
+            mediaCache.set 'allPages', dataObj
+            req.instagram.allPages = dataObj
+            return next()
+
+        sendRequest "https://api.instagram.com/v1/users/#{userId}/media/recent/?client_id=#{clientId}", callback
