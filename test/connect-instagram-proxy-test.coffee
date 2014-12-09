@@ -6,6 +6,11 @@ proxy = rewire '../src/connect-instagram-proxy'
 firstPageMock = require './mocks/first-page-mock'
 secondPageMock = require './mocks/second-page-mock'
 
+allPagesMock = data: []
+allPagesMock.data = allPagesMock.data.concat firstPageMock.data
+allPagesMock.data = allPagesMock.data.concat secondPageMock.data
+
+
 mediaCache = proxy.__get__ 'mediaCache'
 
 nock('https://api.instagram.com')
@@ -80,6 +85,9 @@ describe 'connect-instagram-proxy', ->
 
     allPages = proxy.allPages
 
+    afterEach ->
+      mediaCache.flushAll()
+
     it 'should exist as a public function', (done) ->
 
       allPages.should.be.a.Function
@@ -105,4 +113,30 @@ describe 'connect-instagram-proxy', ->
 
       middleware = allPages clientId, userId
       middleware req, res, ->
+        done()
+
+    it 'should respond from cache if instagram response is cached', (done) ->
+
+      mediaCache.set 'allPages', allPagesMock
+
+      clientId = 1
+      userId = 1
+
+      middleware = allPages clientId, userId
+      middleware req, res, ->
+        cacheStats = mediaCache.getStats()
+        cacheStats.hits.should.equal 1
+        req.instagram.allPages.should.be.an.Object
+        done()
+
+    it 'should consult instagram API and cache response if not cached', (done) ->
+
+      clientId = 1
+      userId = 1
+
+      middleware = allPages clientId, userId
+      middleware req, res, ->
+        cacheStats = mediaCache.getStats()
+        cacheStats.hits.should.equal 0
+        req.instagram.allPages.should.be.an.Object
         done()
