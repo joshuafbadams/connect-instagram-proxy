@@ -4,7 +4,7 @@
   "description": "Connect middleware for proxying Instagram media",
   "main": "main.js",
   "scripts": {
-    "test": "mocha --compilers coffee:coffee-script/register --reporter nyan test/**"
+    "test": "mocha --compilers coffee:coffee-script/register --reporter spec test/**"
   },
   "repository": {
     "type": "git",
