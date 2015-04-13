@@ -63,3 +63,23 @@ exports.allPages = (clientId, userId = '') ->
             return next()
 
         sendRequest "https://api.instagram.com/v1/users/#{userId}/media/recent/?client_id=#{clientId}", callback
+
+exports.firstTagPage = (accessToken) ->
+  (req, res, next) ->
+
+    tag = req.params.tag
+    req.instagram or= {}
+
+    mediaCache.get 'firstTagPage', (err, value) ->
+      return next(err) if err
+
+      if value.firstTagPage
+        req.instagram.firstTagPage = value.firstTagPage.data
+        next()
+      else
+        sendRequest "https://api.instagram.com/v1/tags/#{tag}/media/recent?access_token=#{accessToken}", (err, response, body) ->
+          setHeaders res
+          resObj = JSON.parse body
+          mediaCache.set 'firstTagPage', resObj
+          req.instagram.firstTagPage = resObj.data
+          next()
