@@ -83,3 +83,34 @@ exports.firstTagPage = (accessToken) ->
           mediaCache.set 'firstTagPage', resObj
           req.instagram.firstTagPage = resObj.data
           next()
+
+exports.allTagPages = (accessToken) ->
+  (req, res, next) ->
+
+    tag = req.params.tag
+    data = []
+    req.instagram or= {}
+
+    mediaCache.get 'allTagPages', (err, value) ->
+      return next(err) if err
+
+      if value.allTagPages
+        req.instagram.allTagPages = value.allTagPages
+        next()
+      else
+        callback = (err, response, body) ->
+          resObj = JSON.parse body
+          pagination = resObj.pagination
+          paginationUrl = pagination['next_url']
+
+          data = data.concat resObj.data
+
+          if paginationUrl?
+            sendRequest paginationUrl, callback
+          else
+            dataObj = data: data
+            mediaCache.set 'allTagPages', dataObj
+            req.instagram.allTagPages = dataObj
+            return next()
+
+        sendRequest "https://api.instagram.com/v1/tags/#{tag}/media/recent?access_token=#{accessToken}", callback
